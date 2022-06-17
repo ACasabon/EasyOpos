@@ -1,0 +1,174 @@
+﻿@page "/SampleData"
+@inject IBlockData blockData
+@inject IOptionData optionData
+@inject IQuestionData questionData
+@inject IUnitData unitData
+@inject IUserData userData
+
+<h3>Sample Data</h3>
+
+@*<button class="btn btn-primary" @onclick="CreateUser">CreateUser</button>
+<button class="btn btn-primary" @onclick="CreateOptions">CreateOptions</button>
+<button class="btn btn-primary" @onclick="CreateQuestions">CreateQuestions</button>
+<button class="btn btn-primary" @onclick="CreateBlocks">CreateBlocks</button>
+<button class="btn btn-primary" @onclick="CreateUnits">CreateUnits</button>*@
+
+@code {
+    //List<BlockModel> blocks;
+    //List<OptionModel> options1;
+    //List<OptionModel> options2;
+    //List<OptionModel> options3;
+    //List<QuestionModel> questions;
+
+    //private async Task CreateUser()
+    //{
+    //    UserModel user = new()
+    //        {
+    //            FirstName = "Adri",
+    //            LastName = "Casa",
+    //            EmailAdress = "adri@test.com",
+    //            DisplayName = "ACasa Sample",
+    //            ObjectIdentifier = "abc-123"
+    //        };
+    //    await userData.CreateUser(user);
+    //}
+
+    //private async Task CreateUnits()
+    //{
+    //    UnitModel unit = new()
+    //        {
+    //            Number = 1,
+    //            Title = "Unit 1",
+    //            Blocks = blocks
+    //        };
+
+    //    await unitData.CreateUnit(unit);
+    //}
+
+    //private async Task CreateBlocks()
+    //{
+    //    blocks = new List<BlockModel>();
+    //    BlockModel block = new()
+    //        {
+    //            Number = 1,
+    //            Title = "Block 1",
+    //            Questions = questions
+    //        };
+    //    await blockData.CreateBlock(block);
+    //    blocks.Add(block);
+    //}
+
+    //private async Task CreateQuestions()
+    //{
+    //    questions = new List<QuestionModel>();
+    //    QuestionModel question = new()
+    //        {
+    //            Question = "¿Quién Inventó la Gravedad?",
+    //            Options = options1
+    //        };
+    //    await questionData.CreateQuestion(question);
+    //    questions.Add(question);
+
+    //    question = new()
+    //        {
+    //            Question = "¿Cual es el método más eficaz para afirmar si una manzana tiene gusanos?",
+    //            Options = options2
+    //        };
+    //    await questionData.CreateQuestion(question);
+    //    questions.Add(question);
+
+    //    question = new()
+    //        {
+    //            Question = "¿Cuánto tiempo llevo detrás tuya mirándote?",
+    //            Options = options3
+    //        };
+    //    await questionData.CreateQuestion(question);
+    //    questions.Add(question);
+    //}
+
+    //private async Task CreateOptions()
+    //{
+    //    options1 = new List<OptionModel>();
+    //    options2 = new List<OptionModel>();
+    //    options3 = new List<OptionModel>();
+    //    OptionModel option = new()
+    //        {
+    //            Content = "Isaac Newton",
+    //            Veracity = true
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options1.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Mister Jägger",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options1.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Dios",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options1.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Rayos X",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options2.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Mordisco",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options2.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Depositar un gusano sobre la manzana",
+    //            Veracity = true
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options2.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Espera, ¿qué?",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options3.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Espera, ¿qué?",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options3.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Tengo miedo",
+    //            Veracity = false
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options3.Add(option);
+
+    //    option = new()
+    //        {
+    //            Content = "Uy, eso me pone",
+    //            Veracity = true
+    //        };
+    //    await optionData.CreateOption(option);
+    //    options3.Add(option);
+    }
+}

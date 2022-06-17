@@ -1,0 +1,256 @@
+﻿@page "/"
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject ProtectedSessionStorage sessionStorage
+@inject IUserData userData
+
+<PageTitle>Index</PageTitle>
+
+<div class="row">
+    <div class="my-container">
+        @if(loggedInUser is null)
+        {
+            <h1 class="mb-4 text-center">Bienvenido a EasyOpos 👋</h1>
+
+            <div class="row mb-3">
+                <p>EasyOpos es un portal que te permite aprender de manera eficaz tus temarios para la oposición de bombero.</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-6" align="center">
+                    <div class="card-image">
+                        <img class="img-fluid" src="../images/team.png"/>
+                    </div>
+                    <p class="card-content m-2">Entra para acceder a tu progreso, fallos y favoritos.</p>
+                    <div class="d-flex flex-row justify-content-center">
+                        <button class="welcome-button btn btn-primary m-1">Login</button>
+                        <button class="welcome-button btn btn-secondary m-1">Register</button>
+                    </div>
+                </div>
+                <div class="col-sm-6" align="center">
+                    <div class="card-image">
+                        <img class="img-fluid" src="../images/premium.png"/>
+                    </div>
+                    <p class="card-content m-2">Descubre cómo funciona EasyOpos y por qué hacerte Premium.</p>
+                    <div class="d-flex flex-row justify-content-center">
+                        <button class="welcome-button btn btn-primary m-1">Info</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!--INFO PERFIL-->
+            <div class="d-flex">
+                <h1 class="me-auto">Hola @loggedInUser.DisplayName</h1>
+                <div> 
+                    <div class="user-image">
+                        <img class="img-fluid" src="../images/user.png"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aditional-info d-flex">
+                <p class="me-auto">Última sesión: 10/06/2022</p>
+                <button type="button" class="profile-btn btn btn-outline-light btn-sm">PERFIL</button>
+            </div>
+
+            <!--PROGRESO DIARIO-->
+            <h3>Progreso diario</h3>
+
+            <div class="progress-item">
+                <div class="row">
+                    <h6 class="col-10">Temas</h6>
+                    <div class="col-2 d-flex justify-content-end">
+                        <h6 class="fraction-progress">0/1</h6>
+                        <span class="edit-progress oi oi-pencil" />
+                    </div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="row">
+                    <h6 class="col-10">Bloques</h6>
+                    <div class="col-2 d-flex justify-content-end">
+                        <h6 class="fraction-progress">1/4</h6>
+                        <span class="edit-progress oi oi-pencil" />
+                    </div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                </div>
+            </div>
+
+            <!--PROGRESO SEMANAL-->
+            <h3>Progreso semanal</h3>
+
+            <div class="progress-item">
+                <div class="row">
+                    <h6 class="col-10">Temas</h6>
+                    <div class="col-2 d-flex justify-content-end">
+                        <h6 class="fraction-progress">2/4</h6>
+                        <span class="edit-progress oi oi-pencil" />
+                    </div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="row">
+                    <h6 class="col-10">Bloques</h6>
+                    <div class="col-2 d-flex justify-content-end">
+                        <h6 class="fraction-progress">7/12</h6>
+                        <span class="edit-progress oi oi-pencil" />
+                    </div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 58%;" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100">58%</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!--SECTIONS-->
+<div class="row">
+    <div class="my-container sections-container">
+        <div class="section-button d-flex align-items-center" @onclick="OpenUnits">
+            <span class="section-icon oi oi-book" />
+            <div class="section-title">TEMAS</div>
+        </div>
+
+        <div class="section-button d-flex align-items-center" @onclick="OpenTests">
+            <span class="section-icon oi oi-file" />
+            <div class="section-title">TEST</div>
+        </div>
+
+        <div class="section-button d-flex align-items-center" @onclick="OpenMistakes">
+            <span class="section-icon oi oi-fire" />
+            <div class="section-title">FALLOS</div>
+        </div>
+
+        <div class="section-button d-flex align-items-center mb-1" @onclick="OpenFavorites">
+            <span class="section-icon oi oi-star" />
+            <div class="section-title">FAVORITOS</div>
+        </div>
+    </div>
+</div>
+
+<!--FOOTER-->
+<div class="row">
+    <div class="my-container footer">
+        <div class="row">
+            <h4 class="footer-title">EASY OPOS</h4>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div>Preguntas Frequentes</div>
+                <div>Política de privacidad</div>
+                <div>Política de Cookies</div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <p>Pagos</p>
+                    <span class="payment-icon m-1 oi oi-credit-card" />
+                    <span class="payment-icon m-1 oi oi-paypal" />
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div>© Copyright EasyOpos 2022</div>
+        </div>
+    </div>
+</div>
+
+@code{
+    private UserModel loggedInUser;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadAndVerifyUser();
+    }
+
+    private async Task LoadAndVerifyUser()
+    {
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        string objectId = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("objectidentifier"))?.Value;
+        if (string.IsNullOrWhiteSpace(objectId) == false)
+        {
+            //loggedInUser = await userData.GetUserFromAuthentication(objectId) ?? new();
+            loggedInUser = await userData.GetUserFromAuthentication(objectId) ?? new UserModel();
+
+            string firstName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
+            string lastName = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
+            string displayName = authState.User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
+            string email = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("email"))?.Value;
+
+            bool isDirty = false;
+
+            if(objectId.Equals(loggedInUser.ObjectIdentifier) == false)
+            {
+                isDirty = true;
+                loggedInUser.ObjectIdentifier = objectId;
+            }
+            if(firstName.Equals(loggedInUser.FirstName) == false)
+            {
+                isDirty = true;
+                loggedInUser.FirstName = firstName;
+            }
+            if(lastName.Equals(loggedInUser.LastName) == false)
+            {
+                isDirty = true;
+                loggedInUser.LastName = lastName;
+            }
+            if(displayName.Equals(loggedInUser.DisplayName) == false)
+            {
+                isDirty = true;
+                loggedInUser.DisplayName = displayName;
+            }
+            if(email.Equals(loggedInUser.EmailAdress) == false)
+            {
+                isDirty = true;
+                loggedInUser.EmailAdress = email;
+            }
+
+            if (isDirty)
+            {
+                if (string.IsNullOrWhiteSpace(loggedInUser.Id)) //No Id from Mongo DB. New User
+                    await userData.CreateUser(loggedInUser);
+                else
+                    await userData.UpdateUser(loggedInUser);
+            }
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+        }
+    }
+
+    private void OpenUnits()
+    {
+        navManager.NavigateTo("/Units");
+    }
+
+    private void OpenTests()
+    {
+        navManager.NavigateTo("/Tests");
+    }
+
+    private void OpenMistakes()
+    {
+        navManager.NavigateTo("/Mistakes");
+    }
+
+    private void OpenFavorites()
+    {
+        navManager.NavigateTo("/Mistakes");
+    }
+}

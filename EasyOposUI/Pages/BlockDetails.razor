@@ -1,0 +1,172 @@
+﻿@page "/Block/{Id}"
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject IUserData userData;
+@inject IUnitData unitData;
+@inject IBlockData blockData;
+@inject IQuestionData questionData;
+
+@if(block is not null)
+{
+    <div class="d-flex mb-4 justify-content-between align-items-center">
+        <div class="m-2">
+            <span class="menu-icon oi oi-arrow-thick-left" @onclick="OpenUnit"/>
+        </div>
+        <div class="m-2">
+            <h1 class="text-center">@block.Title</h1>
+        </div>
+        <div class="m-2">
+            <div class="user-image">
+                <img class="img-fluid" src="../images/user.png"/>
+            </div>
+        </div>
+    </div>
+
+    @if(questions is not null)
+    {
+        <!--PROGRESS BAR-->
+        <div class="d-flex align-items-center">
+            <div class="col">
+            </div>
+            <div class="d-flex">
+                <h4 class="text-center">@(displayQuestion + 1)/@questions.Count</h4>
+            </div>
+            <div class="col mb-2">
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex align-items-center me-2">
+                        <span class="text-success oi oi-circle-check mb-1"/>
+                        <h4 class="text-center m-2">0</h4>
+                    </div>
+                    <div class="d-flex align-items-center me-2">
+                        <span class="text-danger oi oi-circle-x mb-1"/>
+                        <h4 class="text-center m-2">0</h4>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="text-white oi oi-arrow-circle-right mb-1"/>
+                        <h4 class="text-center m-2">0</h4>
+                    </div>
+                </div>
+            </div>            
+        </div>
+
+        <!--QUESTION NAVIGATOR-->
+        <div class="d-flex mb-2">
+            <div class="col d-flex flex-column justify-content-center btn @PreviousNavButtonClass() me-1">
+                <span class="oi oi-arrow-thick-left m-1" @onclick="PreviousQuestion"/>
+            </div>
+            <div class="d-flex flex-column justify-content-center btn question-fav-button me-1 ms-1">
+                <span class="question-fav-icon oi oi-heart m-1" @onclick="FavoriteQuestion"/>
+            </div>
+            <div class="col d-flex flex-column btn @NextNavButtonClass() ms-1">
+                <span class="oi oi-arrow-thick-right m-1" @onclick="NextQuestion"/>
+            </div>
+        </div>
+
+        <!--QUESTION-->
+        <!--TITLE-->
+        <div class="row mb-2 my-container">
+            <h4>@question.Question</h4>
+        </div>
+        <!--OPTIONS--> 
+        @for (int i = 0; i < question.Options.Count; i++)
+        {
+            <div class="row question-option mb-2" @onclick="(() => CheckQuestion(i))">
+                <div class="col-auto">
+                    <div>@LetterFromNumber(i + 1))</div>
+                </div>
+                <div class="col">
+                    <div>@question.Options[i].Content</div>
+                </div>
+            </div>
+        }
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private UserModel loggedInUser;
+    private BlockModel block;
+    private List<QuestionModel> questions;
+    private QuestionModel question;
+    private int displayQuestion = 0;
+
+    protected async override Task OnInitializedAsync()
+    {
+        block = await blockData.GetBlock(Id);
+        loggedInUser = await authProvider.GetUserFromAuth(userData);
+        if (block is not null)
+        {
+            questions = await questionData.GetBlockQuestions(block);
+            question = questions[displayQuestion];
+        }
+    }
+
+    private void OpenUnit()
+    {
+        navManager.NavigateTo($"/Unit/{block.Unit.Id}");
+    }
+
+    private string LetterFromNumber(int num)
+    {
+        string letter = "";
+        while (num > 0)
+        {
+            int currentLetterNumber = (num - 1) % 26;
+            char currentLetter = (char)(currentLetterNumber + 65);
+            letter = currentLetter + letter;
+            num = (num - (currentLetterNumber + 1)) / 26;
+        }
+        return letter;
+    }
+
+    private void PreviousQuestion()
+    {
+        if (displayQuestion <= 0)
+            return;
+        displayQuestion -= 1;
+        question = questions[displayQuestion];
+    }
+
+    private void NextQuestion()
+    {
+        if (displayQuestion >= questions.Count - 1)
+            return;
+        displayQuestion += 1;
+        question = questions[displayQuestion];
+    }    
+
+    string PreviousNavButtonClass()
+    {
+        if (displayQuestion <= 0)
+            return "disabled-question-nav-button";
+        return "question-nav-button";
+    }
+
+    string NextNavButtonClass()
+    {
+        if (displayQuestion >= questions.Count - 1)
+            return "disabled-question-nav-button";
+        return "question-nav-button";
+    }
+
+    private void FavoriteQuestion()
+    {
+
+    }
+
+    private void CheckQuestion(int i)
+    {
+        if (question.Options[i].Veracity)
+        {
+
+        }
+        else
+        {
+            
+        }
+    }
+}

@@ -1,0 +1,57 @@
+﻿@page "/Units"
+@inject IUnitData unitData;
+@inject NavigationManager navManager
+
+<div class="d-flex mb-4 justify-content-between">
+    <div class="m-2">
+        <span class="menu-icon oi oi-arrow-thick-left" @onclick="OpenIndex"/>
+    </div>
+    <div class="m-2">
+        <h1 class="text-center">TEMAS</h1>
+    </div>
+    <div class="m-2">
+        <div class="user-image">
+            <img class="img-fluid" src="../images/user.png"/>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="my-container">
+        @if(units is not null)
+        {
+            @foreach (var u in units)
+            {
+                <div class="section-button row align-items-center" @onclick="(() => OpenUnit(u))">
+                    <div class="col-1"><h3 class="m-2">@u.Number.</h3></div>
+                    <div class="col-9"><h3 class="m-2">@u.Title</h3></div>
+                    <div class="col-1"><h3 class="m-2">0/@u.BlockCount</h3></div>
+                    @if (0 == @u.BlockCount)
+                    {
+                        <div class="col-1"><span class="check-icon oi oi-check mr-2" /></div>
+                    }
+                </div>
+            }
+        }
+        
+    </div>
+</div>
+
+@code {
+    private List<UnitModel> units;
+
+    protected async override Task OnInitializedAsync()
+    {
+        units = await unitData.GetAllUnits();
+    }
+
+    private void OpenUnit(UnitModel unit)
+    {
+        navManager.NavigateTo($"/Unit/{unit.Id}");
+    }
+
+    private void OpenIndex()
+    {
+        navManager.NavigateTo("/");
+    }
+}

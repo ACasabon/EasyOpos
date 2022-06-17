@@ -1,0 +1,79 @@
+﻿@page "/Unit/{Id}"
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject IUserData userData;
+@inject IUnitData unitData;
+@inject IBlockData blockData;
+
+@if(unit is not null)
+{
+    <div class="d-flex mb-4 justify-content-between">
+        <div class="m-2">
+            <span class="menu-icon oi oi-arrow-thick-left" @onclick="OpenUnits"/>
+        </div>
+        <div class="m-2">
+            <h1 class="text-center">@unit.Title</h1>
+        </div>
+        <div class="m-2">
+            <div class="user-image">
+                <img class="img-fluid" src="../images/user.png"/>
+            </div>
+        </div>
+    </div>
+
+    @if(blocks is not null)
+    {
+        <div class="row mb-2">
+            <div class="col">
+            </div>
+            <div class="col">
+                <h4 class="text-center">0/@blocks.Count</h4>
+            </div>
+            <div class="col">
+            </div>            
+        </div>
+        <div class="row">
+            <div class="my-container">
+                @foreach (var b in blocks)
+                {
+                    <div class="section-button row align-items-center" @onclick="(() => OpenBlock(b))">
+                        <div class="col-1"><h3 class="m-2">@b.Number.</h3></div>
+                        <div class="col-9"><h3 class="m-2">@b.Title</h3></div>
+                        <div class="col-1"><h3 class="m-2">0/@b.QuestionCount</h3></div>
+                        @if (0 == b.QuestionCount)
+                        {
+                            <div class="col-1"><span class="check-icon oi oi-check mr-2" /></div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }  
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private UserModel loggedInUser;
+    private UnitModel unit;
+    private List<BlockModel> blocks;
+
+    protected async override Task OnInitializedAsync()
+    {
+        unit = await unitData.GetUnit(Id);
+        loggedInUser = await authProvider.GetUserFromAuth(userData);
+        if (unit is not null)
+            blocks = await blockData.GetUnitBlocks(unit);
+    }
+
+    private void OpenBlock(BlockModel block)
+    {
+        navManager.NavigateTo($"/Block/{block.Id}");
+    }
+
+    private void OpenUnits()
+    {
+        navManager.NavigateTo("/Units");
+    }
+}

@@ -1,0 +1,235 @@
+﻿@page "/Create"
+@attribute [Authorize]
+@using EasyOposUI.Components
+@using EasyOposUI.Models
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject IUserData userData;
+@inject IUnitData unitData;
+@inject IBlockData blockData;
+@inject IQuestionData questionData;
+@inject IOptionData optionData;
+
+<h1>Añadir Datos</h1>
+
+<div class="my-container mb-4">
+    <h2>Crear Unidad</h2>
+    <EditForm Model="unit" OnValidSubmit="CreateUnit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group mb-2">
+            <label for="unit-number">Número de la Unidad</label>
+            <InputNumber id="unit-number" @bind-Value="unit.Number" class="form-control"/>
+        </div>
+        <div class="form-group mb-4">
+            <label for="unit-title">Título de la Unidad</label>
+            <InputText id="unit-title" @bind-Value="unit.Title" class="form-control"/>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-outline-light">Crear</button>
+        </div>
+    </EditForm>
+</div>
+
+<div class="my-container mb-4">
+    <h2>Crear Bloque</h2>
+    @if (units?.Count > 0)
+    {
+        <EditForm Model="block" OnValidSubmit="CreateBlock">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group mb-2">
+                <label for="block-number">Número del Bloque</label>
+                <InputNumber id="block-number" @bind-Value="block.Number" class="form-control"/>
+            </div>
+            <div class="form-group mb-2">
+                <label for="block-title">Título del Bloque</label>
+                <InputText id="block-title" @bind-Value="block.Title" class="form-control"/>
+            </div>
+            <div class="form-group mb-4">
+                 <label for="block-unit">Unidad Padre</label>
+                 <MyInputSelect id="block-unit" @bind-Value="block.UnitId" class="form-control">
+                    @foreach (var u in units)
+                    {
+                        <option value="@u.Id" id="@u.Id">@u.Title</option>
+                    }
+                 </MyInputSelect>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-light">Crear</button>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <p>Crea primero una Unidad para poder añadir Bloques.</p>
+    }
+</div>
+
+<div class="my-container">
+    <h2>Crear Pregunta</h2>
+    @if (blocks?.Count > 0)
+    {
+        <EditForm Model="question" OnValidSubmit="CreateQuestion">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group mb-2">
+                <label for="question-text">Texto pregunta</label>
+                <InputTextArea id="question-text" @bind-Value="question.Question" class="form-control" rows="3"/>
+            </div>
+            <div class="form-group mb-2">
+                <label for="optiona">Opción A</label>
+                <InputText id="optiona" @bind-Value="question.OptionA.Content" class="form-control"/>
+                <div class="form-group">
+                    <InputCheckbox id="veracitya" @bind-Value="question.OptionA.Veracity"></InputCheckbox>
+                    <label class="form-check-label" for="veracitya">Verdadero</label>
+                </div>
+            </div>
+            <div class="form-group mb-2">
+                <label for="optionb">Opción B</label>
+                <InputText id="optionb" @bind-Value="question.OptionB.Content" class="form-control"/>
+                <div class="form-group">
+                    <InputCheckbox id="veracityb" @bind-Value="question.OptionB.Veracity"></InputCheckbox>
+                    <label class="form-check-label" for="veracityb">Verdadero</label>
+                </div>
+            </div>
+            <div class="form-group mb-2">
+                <label for="optionc">Opción C</label>
+                <InputText id="optionc" @bind-Value="question.OptionC.Content" class="form-control"/>
+                <div class="form-group">
+                    <InputCheckbox id="veracityc" @bind-Value="question.OptionC.Veracity"></InputCheckbox>
+                    <label class="form-check-label" for="veracityc">Verdadero</label>
+                </div>
+            </div>
+            <div class="form-group mb-4">
+                 <label for="question-block">Bloque Padre</label>
+                 <MyInputSelect id="question-block" @bind-Value="question.BlockId" class="form-control">
+                    @foreach (var b in blocks)
+                    {
+                        <option value="@b.Id">@b.Title</option>
+                    }
+                 </MyInputSelect>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-light">Crear</button>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <p>Crea primero un Bloque para poder añadir Preguntas.</p>
+    }
+</div>
+
+@code {
+    private List<UnitModel> units;
+    private List<BlockModel> blocks;
+    private UserModel loggedInUser;
+    private CreateUnitModel unit = new();
+    private CreateBlockModel block = new();
+    private CreateQuestionModel question = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        units = await unitData.GetAllUnits();
+        blocks = await blockData.GetAllBlocks();
+        loggedInUser = await authProvider.GetUserFromAuth(userData);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if(units?.Count > 0)
+                block.UnitId = units[0].Id;
+            if(blocks?.Count > 0)
+                question.BlockId = blocks[0].Id;
+        }
+    }
+
+    private void GoHome()
+    {
+        navManager.NavigateTo("/");
+    }
+
+    private async Task CreateUnit()
+    {
+        UnitModel u = new();
+        u.Number = unit.Number;
+        u.Title = unit.Title;
+
+        await unitData.CreateUnit(u);
+        unit = new();
+
+        units = await unitData.GetAllUnits(true);
+    }
+
+    private async Task CreateBlock()
+    {
+        BlockModel b = new();
+        b.Number = block.Number;
+        b.Title = block.Title;
+        b.Unit = await unitData.GetUnit(block.UnitId);
+
+        if(b.Unit is null)
+        {
+            block.UnitId = "";
+            return;
+        }
+
+        await blockData.CreateBlock(b);
+        b.Unit.BlockCount += 1;
+        await unitData.UpdateUnit(b.Unit);
+        block = new();
+        block.UnitId = b.Unit.Id;
+
+        blocks = await blockData.GetAllBlocks(true);
+    }
+
+    private async Task CreateQuestion()
+    {
+        //OPTIONS
+        List<OptionModel> options = new();
+        //A
+        OptionModel o = new();
+        o.Content = question.OptionA.Content;
+        o.Veracity = question.OptionA.Veracity;
+
+        await optionData.CreateOption(o);
+        options.Add(o);
+
+        //B
+        o = new();
+        o.Content = question.OptionB.Content;
+        o.Veracity = question.OptionB.Veracity;
+
+        await optionData.CreateOption(o);
+        options.Add(o);
+
+        //C
+        o = new();
+        o.Content = question.OptionC.Content;
+        o.Veracity = question.OptionC.Veracity;
+
+        await optionData.CreateOption(o);
+        options.Add(o);
+
+        //QUESTION
+        QuestionModel q = new();
+        q.Question = question.Question;
+        q.Options = options;
+        q.Block =  await blockData.GetBlock(question.BlockId);
+
+        if(q.Block is null)
+        {
+            question.BlockId = "";
+            return;
+        }
+
+        await questionData.CreateQuestion(q);
+        q.Block.QuestionCount += 1;
+        await blockData.UpdateBlock(q.Block);
+        question = new();
+        question.BlockId = q.Block.Id;
+    }
+}

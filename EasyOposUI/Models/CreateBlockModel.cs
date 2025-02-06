@@ -8,9 +8,9 @@ namespace EasyOposUI.Models
         public int Number { get; set; }
         [Required]
         public string Title { get; set; }
-        //[Required]
-        //[MinLength(1)]
-        //[Display(Name = "Unidad")]
+        [Required]
+        [MinLength(1)]
+        [Display(Name = "Unidad")]
         public string UnitId { get; set; }
     }
 }
